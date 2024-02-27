@@ -7,7 +7,7 @@ def get_story_links(list_url):
     print(list_url)
     print(f"Request to {list_url} returned status code {response.status_code}")
     soup = BeautifulSoup(response.text, "html.parser")
-    links = soup.find_all("a", class_="link")
+    links = soup.find_all("a")
     print(f"Found {len(links)} links")
     urls = [link['href'] for link in links if link['href'].startswith('http')]  # Ensure it's a full URL
     print(urls)
@@ -33,14 +33,21 @@ def scrape_storycorps(base_url):
         transcripts[url] = get_transcript(url)
     return transcripts
 
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-}
-base_list_url = "https://storycorps.org/stories/"
-transcripts = scrape_storycorps(base_list_url)
-if not transcripts:  # Debug check
-    print("No transcripts were scraped. Check the scrape_storycorps function.")
-for url, transcript in transcripts.items():
-    print(f"Transcript for {url}:")
-    print(transcript)
-    print("\n---\n")
+
+if __name__ == "__main__":
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+    }
+    base_list_url = "https://storycorps.org/stories/"
+    transcripts = scrape_storycorps(base_list_url)
+    if not transcripts:  # Debug check
+        print("No transcripts were scraped. Check the scrape_storycorps function.")
+    index = 1
+    for url, transcript in transcripts.items():
+        print(f"Transcript for {url}:")
+        print(transcript)
+        print("written to file:", "../data/storycorps/" + str(index) + ".txt")
+        print("\n---\n")
+        with open("../data/storycorps/" + str(index) + ".txt", "a") as f:
+            f.write(transcript)
+        index += 1
