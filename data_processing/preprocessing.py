@@ -20,11 +20,6 @@ def process(file_name: str, root: str):
     print(document)
 
 
-def write_json(file_path, values):
-    with open(file_path, "a", encoding="utf-8") as f:
-        print(json.dumps(values) + ",", file=f)
-
-
 def preannotation():
     document_sentences_dict = {}
     for root, dirs, files in os.walk("../data/storycorps"):

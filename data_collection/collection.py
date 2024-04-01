@@ -49,6 +49,6 @@ if __name__ == "__main__":
         print("written to file:", "../data/storycorps/" + str(index) + ".txt")
         print("\n---\n")
         if not transcript == "No transcript found":
-            with open("../data/storycorps/" + str(index) + ".txt", "a", encoding="utf-8") as f:
+            with open("../data/storycorps/" + str(index) + ".txt", "w", encoding="utf-8") as f:
                 f.write(transcript)
             index += 1
