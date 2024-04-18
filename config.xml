@@ -21,8 +21,9 @@
           <Choice value="Warning"/>
           <Choice value="Prompt"/>
         <Header value="Inform" size="10"/>
-          <Choice value="Define"/>
-          <Choice value="Analyze"/>
+          <Choice value="Explain"/>
+          <Choice value="Open-ended Declaration"/>
+          <Choice value="Response"/>
           <Choice value="Statement"/>
         <Header value="Question" size="10"/>
           <Choice value="Clarification"/>
