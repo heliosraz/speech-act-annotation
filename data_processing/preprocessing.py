@@ -22,7 +22,8 @@ def process(file_name: str, root: str):
 
 def preannotation():
     document_sentences_dict = {}
-    for root, dirs, files in os.walk("../data/storycorps"):
+    #
+    for root, dirs, files in os.walk("../data/raw_data/storycorps"):
         for name in files:
             document_sentences = []
             print(name)
@@ -41,7 +42,7 @@ def preannotation():
                             document_sentences.append(s)
             document_sentences_dict[name] = document_sentences
     result = []
-    for root, dirs, files in os.walk("../data/storycorps"):
+    for root, dirs, files in os.walk("../data/raw_data/storycorps"):
         for name in files:
             print(name)
             spans = []
