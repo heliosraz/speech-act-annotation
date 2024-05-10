@@ -1,8 +1,9 @@
 import pandas as pd
 import os
-from collections import Counter
+from collections import Counter, defaultdict
 
-def kappa(data:pd.DataFrame):
+
+def kappa(data: pd.DataFrame):
     for i, row in data.iterrows():
         for annotations in zip(row.iloc[1:]):
             print([type(item) for item in [l for l in annotations]])
@@ -12,20 +13,29 @@ def kappa(data:pd.DataFrame):
             # print(tag_counts)
 
 
-def complied_data(data:pd.DataFrame):
-    for root, dirs, files in os.walk(annotations_folder):
-        for i, f in enumerate(files):
-            df = pd.read_json(os.path.join(root, f))
-            df["data"] = [r["text"] for r in df["data"]]
-            if not data["data"].equals(df["data"]):
-                data["data"] = df["data"]
-            df = df.rename(columns={"annotations": f"annotations_{i}"})
-            data = pd.merge(data, df[[f"annotations_{i}", f"data"]], on="data")
+def compile_data(file):
+    result = pd.DataFrame(columns=["data","annotations"])
+    annotations=[]
+    df = pd.read_json(file, encoding="utf-8")
+    df["data"] = [r["text"] for r in df["data"]]
+    df["annotations"] =
+    for j, row in enumerate(df["annotations"]):
+        annotation_dict = defaultdict(set)
+        for annotation in row[0]["result"]:
+            if "choices" in annotation["value"]:
+                annotation_dict[annotation["value"]['text']].add(annotation["value"]['choices'][0])
+        df["annotations"].iloc[j] = annotation_dict
     return data
 
 
 if __name__ == "__main__":
     annotations_folder = "../annotations"
+    file_paths = [os.path.join(root, file) for root, dirs, files in os.walk(annotations_folder) for file in files]
     data = pd.DataFrame(columns=["data"])
-    data = complied_data(data)
-    kappa(data)
+    for i, file in enumerate(file_paths):
+        annotations =  compile_data(file)
+        annotations = annotations.rename(columns={"annotations": f"annotations_{i}"})
+        if not data["data"].equals(annotations["data"]):
+            data["data"] = annotations["data"]
+        data = pd.merge(data, df[[f"annotations_{i}", f"data"]], on="data")
+
