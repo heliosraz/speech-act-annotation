@@ -18,14 +18,14 @@ def compile_data(file):
     annotations=[]
     df = pd.read_json(file, encoding="utf-8")
     df["data"] = [r["text"] for r in df["data"]]
-    df["annotations"] =
     for j, row in enumerate(df["annotations"]):
         annotation_dict = defaultdict(set)
         for annotation in row[0]["result"]:
             if "choices" in annotation["value"]:
                 annotation_dict[annotation["value"]['text']].add(annotation["value"]['choices'][0])
-        df["annotations"].iloc[j] = annotation_dict
-    return data
+        annotations.append(dict(annotation_dict))
+    df.loc[:,"annotations"] = annotations
+    return df
 
 
 if __name__ == "__main__":
@@ -35,7 +35,10 @@ if __name__ == "__main__":
     for i, file in enumerate(file_paths):
         annotations =  compile_data(file)
         annotations = annotations.rename(columns={"annotations": f"annotations_{i}"})
-        if not data["data"].equals(annotations["data"]):
+        # initializing data column
+        if len(data["data"])<1:
             data["data"] = annotations["data"]
-        data = pd.merge(data, df[[f"annotations_{i}", f"data"]], on="data")
-
+        # merging new data
+        data = pd.merge(data, annotations.loc[:,[f"data", f"annotations_{i}"]], on="data", how="left")
+    # catch nan entries
+    data = data.applymap(lambda x: {} if pd.isnull(x) else x)
