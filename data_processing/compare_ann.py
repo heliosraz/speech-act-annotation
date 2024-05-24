@@ -1,5 +1,6 @@
 import json
 from collections import defaultdict
+import os
 
 
 def load_annotations_from_json(file_path):
@@ -51,30 +52,30 @@ def compare_annotations(annotations_list):
 
     return agreements, disagreements
 
+if __name__=="__main__":
+    # Example usage
+    annotations_folder = "../annotations"
+    file_paths = [load_annotations_from_json(os.path.join(root, file)) for root, dirs, files in os.walk(annotations_folder) for file in files]
 
-# Example usage
-file_paths = ['project-2-at-2024-05-03-18-22-da5d8ca1.json', 'project-5-at-2024-04-28-02-09-d9ec588d.json']
-annotations_list = [load_annotations_from_json(file_path) for file_path in file_paths]
+    agreements, disagreements = compare_annotations(file_paths)
 
-agreements, disagreements = compare_annotations(annotations_list)
+    print("Agreements:")
+    if not agreements:  # Check if there are any agreements to print
+        print("No agreements found.")
+    else:
+        for (annotator1, annotator2), spans in agreements.items():
+            print(f"Annotations between annotator {annotator1 + 1} and annotator {annotator2 + 1} agree on:")
+            for text, span_indices, labels in spans:
+                print(f"  Span: \"{text}\" ({span_indices[0]}, {span_indices[1]})")
+                print(f"  Labels: {', '.join(labels)}")
 
-print("Agreements:")
-if not agreements:  # Check if there are any agreements to print
-    print("No agreements found.")
-else:
-    for (annotator1, annotator2), spans in agreements.items():
-        print(f"Annotations between annotator {annotator1 + 1} and annotator {annotator2 + 1} agree on:")
-        for text, span_indices, labels in spans:
-            print(f"  Span: \"{text}\" ({span_indices[0]}, {span_indices[1]})")
-            print(f"  Labels: {', '.join(labels)}")
-
-print("\nDisagreements:")
-if not disagreements:  # Check if there are any disagreements to print
-    print("No disagreements found.")
-else:
-    for (annotator1, annotator2), spans in disagreements.items():
-        print(f"Annotations between annotator {annotator1 + 1} and annotator {annotator2 + 1} disagree on:")
-        for text, span_indices, labels1, labels2 in spans:
-            print(f"  Span: \"{text}\" ({span_indices[0]}, {span_indices[1]})")
-            print(f"  Labels 1: {', '.join(labels1)}")
-            print(f"  Labels 2: {', '.join(labels2)}")
+    print("\nDisagreements:")
+    if not disagreements:  # Check if there are any disagreements to print
+        print("No disagreements found.")
+    else:
+        for (annotator1, annotator2), spans in disagreements.items():
+            print(f"Annotations between annotator {annotator1 + 1} and annotator {annotator2 + 1} disagree on:")
+            for text, span_indices, labels1, labels2 in spans:
+                print(f"  Span: \"{text}\" ({span_indices[0]}, {span_indices[1]})")
+                print(f"  Labels 1: {', '.join(labels1)}")
+                print(f"  Labels 2: {', '.join(labels2)}")
